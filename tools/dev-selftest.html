@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>selftest</title>
+<style>
+  iframe { position: absolute; left: 0; top: 720px; width: 1100px; height: 700px; border: 1px solid #ccc; }
+  pre { position: relative; z-index: 10; background: #fff; margin: 0; font: 12px/1.55 monospace; padding: 10px; }
+</style>
+</head>
+<body>
+<iframe id="fh"></iframe>
+<iframe id="fr"></iframe>
+<pre id="out">running...</pre>
+<script>
+var R = [];
+function ok(name, cond, extra) {
+  R.push((cond ? 'PASS' : 'FAIL') + ' :: ' + name + (extra ? '  [' + extra + ']' : ''));
+}
+function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
+function loaded(f) {
+  return new Promise(function (r) {
+    f.onload = function () { r(); };
+  });
+}
+function clean() {
+  ['ct_prefs', 'ct_progress', 'ct_read'].forEach(function (k) { localStorage.removeItem(k); });
+}
+
+(async function () {
+  try {
+    clean();
+    var fh = document.getElementById('fh');
+    var fr = document.getElementById('fr');
+
+    /* ---------- 首页 · 首次访问 ---------- */
+    var p1 = loaded(fh);
+    fh.src = '../index.html';
+    await p1;
+    await wait(700);
+    var d = fh.contentDocument;
+
+    ok('首页标题渲染', d.getElementById('bookTitle').textContent === '长天有痕',
+       d.getElementById('bookTitle').textContent);
+    ok('目录渲染 30 章', d.querySelectorAll('.toc__item').length === 30,
+       d.querySelectorAll('.toc__item').length);
+    ok('统计条 3 项', d.querySelectorAll('.stats__item').length === 3);
+    ok('标签渲染', d.querySelectorAll('.tag').length > 0,
+       d.querySelectorAll('.tag').length);
+    ok('简介分段', d.querySelectorAll('.intro p').length >= 3,
+       d.querySelectorAll('.intro p').length);
+    ok('首访时无「继续阅读」', d.getElementById('continueBtn').hidden === true);
+    ok('开始阅读指向第 1 章', d.getElementById('startBtn').getAttribute('href') === 'read.html?c=1');
+
+    /* ---------- 阅读页 ---------- */
+    var p2 = loaded(fr);
+    fr.src = '../read.html?c=1';
+    await p2;
+    await wait(900);
+    var dr = fr.contentDocument, wr = fr.contentWindow;
+
+    ok('阅读页标题', /第1章/.test(dr.getElementById('chTitle').textContent),
+       dr.getElementById('chTitle').textContent);
+    var paras = dr.querySelectorAll('#chBody p').length;
+    ok('正文段落渲染', paras > 15, paras + ' 段');
+    ok('副标题含书名', /长天有痕/.test(dr.getElementById('chSub').textContent));
+    ok('抽屉目录 30 项', dr.querySelectorAll('.dch').length === 30,
+       dr.querySelectorAll('.dch').length);
+    ok('当前章高亮', dr.querySelectorAll('.dch.is-current').length === 1);
+    ok('首页按钮：上一章禁用', dr.getElementById('btnPrev').classList.contains('is-disabled'));
+    ok('首页按钮：下一章可用', !dr.getElementById('btnNext').classList.contains('is-disabled'));
+
+    /* ---------- 翻章 ---------- */
+    dr.getElementById('btnNext').click();
+    await wait(700);
+    ok('下一章生效', /第2章/.test(dr.getElementById('chTitle').textContent),
+       dr.getElementById('chTitle').textContent);
+    ok('URL 同步', /c=2/.test(wr.location.search), wr.location.search);
+
+    dr.getElementById('btnPrev').click();
+    await wait(700);
+    ok('上一章返回', /第1章/.test(dr.getElementById('chTitle').textContent));
+
+    /* ---------- 设置 ---------- */
+    dr.getElementById('btnSet').click();
+    await wait(400);
+    ok('设置面板打开', dr.getElementById('sheet').classList.contains('is-open'));
+
+    dr.querySelector('#segFont .seg__btn[data-v="21"]').click();
+    await wait(300);
+    var prefs = JSON.parse(wr.localStorage.getItem('ct_prefs') || '{}');
+    ok('字号写入 localStorage', prefs.font === 21, JSON.stringify(prefs));
+    ok('字号 CSS 变量生效',
+       wr.document.documentElement.style.getPropertyValue('--rd-fs') === '21px',
+       wr.document.documentElement.style.getPropertyValue('--rd-fs'));
+
+    dr.querySelector('#segTheme .seg__btn[data-v="night"]').click();
+    await wait(300);
+    ok('夜间主题生效', dr.body.dataset.theme === 'night', dr.body.dataset.theme);
+    ok('夜间主题持久化', JSON.parse(wr.localStorage.getItem('ct_prefs')).theme === 'night');
+
+    dr.querySelector('#segTheme .seg__btn[data-v="paper"]').click();
+    await wait(200);
+    ok('切回宣纸主题', dr.body.dataset.theme === 'paper');
+
+    /* ---------- 目录抽屉 ---------- */
+    dr.getElementById('btnToc').click();
+    await wait(400);
+    ok('目录抽屉打开', dr.getElementById('drawer').classList.contains('is-open'));
+    dr.querySelector('.dch[data-n="5"]').click();
+    await wait(800);
+    ok('抽屉跳章生效', /第5章/.test(dr.getElementById('chTitle').textContent),
+       dr.getElementById('chTitle').textContent);
+    ok('跳章后抽屉关闭', !dr.getElementById('drawer').classList.contains('is-open'));
+
+    /* ---------- 进度记忆 ---------- */
+    await wait(1400);   // 等 rAF 排队的滚动复位跑完，再测滚动
+    dr.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
+    dr.body.style.setProperty('scroll-behavior', 'auto', 'important');
+    var de = dr.documentElement;
+    var diag = 'sh=' + de.scrollHeight + ' ih=' + wr.innerHeight + ' cl=' + de.clientHeight;
+    de.scrollTop = 900;
+    wr.scrollTo(0, 900);
+    // 无头环境下滚动不会自动派发 scroll 事件（渲染帧被跳过），手动补一次以验证逻辑
+    wr.dispatchEvent(new wr.Event('scroll'));
+    await wait(800);
+    var prog = JSON.parse(wr.localStorage.getItem('ct_progress') || 'null');
+    ok('滚动进度已保存', !!prog && prog.chapter === 5 && prog.scroll > 0.1,
+       JSON.stringify(prog) + ' | ' + diag + ' y=' + wr.scrollY + ' st=' + de.scrollTop);
+    ok('滚动进度条有宽度',
+       parseFloat(dr.getElementById('progressBar').style.width) > 5,
+       dr.getElementById('progressBar').style.width);
+    ok('已读记录写入', (JSON.parse(wr.localStorage.getItem('ct_read') || '[]')).length > 0);
+
+    /* ---------- 首页 · 有进度 ---------- */
+    var p3 = loaded(fh);
+    fh.src = '../index.html?r=' + Date.now();
+    await p3;
+    await wait(700);
+    var d2 = fh.contentDocument;
+    ok('有进度时显示「继续阅读」', d2.getElementById('continueBtn').hidden === false);
+    ok('继续阅读指向第 5 章',
+       /c=5/.test(d2.getElementById('continueBtn').getAttribute('href')),
+       d2.getElementById('continueBtn').getAttribute('href'));
+    ok('已读章节打标', d2.querySelectorAll('.toc__item.is-read').length > 0,
+       d2.querySelectorAll('.toc__item.is-read').length);
+
+    /* ---------- 边界 ---------- */
+    var p4 = loaded(fr);
+    fr.src = '../read.html?c=999';
+    await p4;
+    await wait(900);
+    ok('越界章节有兜底', fr.contentDocument.getElementById('chTitle').textContent.length > 0,
+       fr.contentDocument.getElementById('chTitle').textContent);
+
+    clean();
+  } catch (e) {
+    R.push('EXCEPTION :: ' + (e && e.message ? e.message : e));
+  }
+  var pass = R.filter(function (l) { return l.indexOf('PASS') === 0; }).length;
+  R.push('合计 ' + pass + ' / ' + R.length + ' 项通过');
+  document.getElementById('out').textContent = R.join('\n');
+})();
+</script>
+</body>
+</html>

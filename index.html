@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#101216">
+<meta name="description" content="《长天有痕》在线阅读 — 东方玄幻长篇">
+<title>长天有痕 — 在线阅读</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body class="page-home">
+
+<header class="topbar">
+  <div class="wrap topbar__inner">
+    <div class="brand"><span class="brand__mark">長</span>长天有痕</div>
+    <a class="topbar__btn" id="continueBtn" hidden>继续阅读</a>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <div class="cover">
+      <h1 class="cover__title" id="coverTitle">長天有痕</h1>
+      <span class="cover__seal">痕</span>
+    </div>
+
+    <div class="info">
+      <h1 class="info__title" id="bookTitle">长天有痕</h1>
+      <div class="info__meta" id="bookMeta"></div>
+      <div class="tagrow" id="bookTags"></div>
+      <div class="intro" id="bookIntro"></div>
+
+      <div class="actions">
+        <a class="btn btn--primary" id="startBtn" href="read.html?c=1">开始阅读</a>
+        <a class="btn btn--ghost" href="#toc">章节目录</a>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats" id="stats"></div>
+
+  <section id="toc">
+    <div class="section-head">
+      <h2>章节目录</h2>
+      <span class="section-head__count" id="tocCount"></span>
+    </div>
+    <div class="toc" id="tocList"></div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <strong id="footerTitle">长天有痕</strong> · 在线阅读<br>
+    本站内容为原创作品，未经许可请勿转载。
+  </div>
+</footer>
+
+<script src="data/book.js"></script>
+<script src="assets/home.js"></script>
+</body>
+</html>
