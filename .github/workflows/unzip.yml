@@ -1,0 +1,31 @@
+name: Unzip site archive
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract site files
+        run: |
+          set -e
+          mkdir -p /tmp/site
+          unzip -o novel-site-deploy.zip -d /tmp/site
+          for item in index.html assets data tools README.md; do
+            if [ -e "/tmp/site/$item" ]; then
+              cp -r "/tmp/site/$item" .
+            fi
+          done
+          rm -f novel-site-deploy.zip
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Extract site files from archive" || echo "nothing to commit"
+          git push
