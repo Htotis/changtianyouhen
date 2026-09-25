@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f1e6">
+<meta name="description" content="《长天有痕》在线阅读">
+<title>阅读 — 长天有痕</title>
+<link rel="stylesheet" href="assets/style.css">
+<style>html{scroll-behavior:auto}</style>
+</head>
+<body class="page-read">
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- 顶栏 -->
+<header class="rd-head" id="rdHead">
+  <a class="rd-head__btn" href="index.html" title="返回书架" aria-label="返回书架">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+  </a>
+  <div class="rd-head__title" id="headTitle">加载中</div>
+  <button class="rd-head__btn" id="btnTocTop" title="目录" aria-label="目录">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+  </button>
+  <button class="rd-head__btn" id="btnSetTop" title="阅读设置" aria-label="阅读设置" style="font-size:15px;font-family:Georgia,serif">Aa</button>
+</header>
+
+<!-- 正文 -->
+<main class="rd-main" id="rdMain">
+  <div class="loading" id="loading">正在展开卷轴<div class="loading__bar"></div></div>
+
+  <article id="article" hidden>
+    <h1 class="rd-title" id="chTitle"></h1>
+    <p class="rd-sub" id="chSub"></p>
+    <div class="rd-body" id="chBody"></div>
+    <div class="rd-end">— 本章完 —</div>
+
+    <nav class="rd-nav">
+      <a class="rd-nav__btn" id="navPrev">
+        <span class="rd-nav__label">上一章</span>
+        <span class="rd-nav__name" id="navPrevName">—</span>
+      </a>
+      <a class="rd-nav__btn rd-nav__btn--next" id="navNext">
+        <span class="rd-nav__label">下一章</span>
+        <span class="rd-nav__name" id="navNextName">—</span>
+      </a>
+    </nav>
+  </article>
+</main>
+
+<!-- 底部栏 -->
+<footer class="rd-foot" id="rdFoot">
+  <button class="rd-foot__btn" id="btnPrev">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 7l-5 5 5 5"/></svg>
+    <span>上一章</span>
+  </button>
+  <button class="rd-foot__btn" id="btnToc">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>
+    <span>目录</span>
+  </button>
+  <button class="rd-foot__btn" id="btnNext">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 7l5 5-5 5"/></svg>
+    <span>下一章</span>
+  </button>
+  <button class="rd-foot__btn" id="btnSet">
+    <span style="font-size:17px;font-family:Georgia,serif;line-height:1">Aa</span>
+    <span>设置</span>
+  </button>
+</footer>
+
+<!-- 遮罩 -->
+<div class="mask" id="mask"></div>
+
+<!-- 目录抽屉 -->
+<aside class="drawer" id="drawer" aria-label="章节目录">
+  <div class="drawer__head">
+    <div class="drawer__book">
+      <h3 id="drawerBook">长天有痕</h3>
+      <span id="drawerCount"></span>
+    </div>
+    <button class="rd-head__btn" id="btnDrawerClose" aria-label="关闭">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+    </button>
+  </div>
+  <div class="drawer__list" id="drawerList"></div>
+</aside>
+
+<!-- 设置面板 -->
+<div class="sheet" id="sheet">
+  <div class="sheet__row">
+    <span class="sheet__label">字号</span>
+    <div class="seg" id="segFont">
+      <button class="seg__btn" data-v="17">小</button>
+      <button class="seg__btn" data-v="19">中</button>
+      <button class="seg__btn" data-v="21">大</button>
+      <button class="seg__btn" data-v="23">特大</button>
+    </div>
+  </div>
+  <div class="sheet__row">
+    <span class="sheet__label">行距</span>
+    <div class="seg" id="segLine">
+      <button class="seg__btn" data-v="1.75">紧凑</button>
+      <button class="seg__btn" data-v="1.95">标准</button>
+      <button class="seg__btn" data-v="2.25">宽松</button>
+    </div>
+  </div>
+  <div class="sheet__row">
+    <span class="sheet__label">主题</span>
+    <div class="seg" id="segTheme">
+      <button class="seg__btn" data-v="paper">宣纸</button>
+      <button class="seg__btn" data-v="sepia">护眼</button>
+      <button class="seg__btn" data-v="night">夜间</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="data/book.js"></script>
+<script src="assets/reader.js"></script>
+</body>
+</html>
