@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="robots" content="noindex,nofollow">
-<title>管理 · 书架</title>
+<title>上传 · 书架</title>
 <style>
 :root{
   --bg:#14110d; --card:#1e1913; --line:rgba(255,255,255,.08);
@@ -13,115 +13,104 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:var(--bg);color:var(--text);font-family:"Noto Serif SC","Songti SC",serif;line-height:1.8;min-height:100vh}
-.wrap{max-width:680px;margin:0 auto;padding:20px 16px 60px}
-header.top{text-align:center;padding:26px 0 18px;border-bottom:1px solid var(--line);margin-bottom:18px}
-header.top h1{font-size:1.3em;letter-spacing:.35em;color:var(--gold);margin-bottom:6px}
+.wrap{max-width:620px;margin:0 auto;padding:20px 16px 60px}
+header.top{text-align:center;padding:26px 0 18px}
+header.top h1{font-size:1.25em;letter-spacing:.4em;color:var(--gold);margin-bottom:6px}
 header.top p{color:var(--muted);font-size:.82em}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
-.card h2{font-size:1em;color:var(--gold);margin-bottom:14px;letter-spacing:.15em}
-label{display:block;margin-bottom:12px;font-size:.9em;color:var(--muted)}
+.drop{border:2px dashed var(--gold-dim);border-radius:14px;padding:38px 20px;text-align:center;cursor:pointer;transition:.2s;background:var(--card)}
+.drop:hover,.drop.over{border-color:var(--gold);background:rgba(217,164,91,.06)}
+.drop .plus{font-size:2em;color:var(--gold);line-height:1;margin-bottom:8px}
+.drop p{font-size:.92em}
+.drop .sub{color:var(--muted);font-size:.8em;margin-top:6px}
+textarea.paste{width:100%;margin-top:12px;min-height:90px;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);color:var(--text);font-family:inherit;font-size:.88em;line-height:1.9;resize:vertical}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:14px}
+.detect{font-size:.92em;color:var(--gold);margin-bottom:14px}
+.detect small{color:var(--muted);display:block;margin-top:4px;font-size:.82em}
+label{display:block;margin-bottom:12px;font-size:.88em;color:var(--muted)}
 label input,label textarea,label select{display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#14110d;color:var(--text);font-size:.95em;font-family:inherit}
 label textarea{line-height:1.9;resize:vertical}
-label select{appearance:auto}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
-.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.note{font-size:.82em;color:var(--muted);margin:-4px 0 12px}
 .btn{border:1px solid var(--gold-dim);background:transparent;color:var(--gold);border-radius:20px;padding:9px 20px;font-size:.9em;cursor:pointer;font-family:inherit}
 .btn:hover{background:rgba(217,164,91,.12)}
 .btn--primary{background:var(--gold);color:#1a140d;border-color:var(--gold);font-weight:600}
 .btn--primary:hover{background:#c8934a}
+.btn--big{width:100%;padding:13px;font-size:1em;border-radius:12px;margin-top:4px}
+.btn--sm{padding:5px 14px;font-size:.8em}
 .btn:disabled{opacity:.45;cursor:default}
-.hint{font-size:.8em;color:var(--muted);margin-top:10px;line-height:1.7}
-.hint code{color:var(--gold);font-size:.95em}
-.msg{font-size:.88em;margin-top:10px;min-height:1.6em;white-space:pre-wrap;word-break:break-all}
-.msg.ok{color:var(--ok)} .msg.err{color:var(--danger)} .msg.info{color:var(--muted)}
-.msg a{color:var(--gold)}
-input[type=file]{margin:4px 0 12px;font-size:.85em;color:var(--muted)}
 .prog{height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:12px;overflow:hidden;display:none}
 .prog.show{display:block}
 .prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
-.latest-tag{font-size:.85em;color:var(--gold)}
-.preview{background:#14110d;border:1px solid var(--line);border-radius:8px;padding:12px;font-size:.85em;max-height:260px;overflow:auto;margin-top:10px;display:none}
-.preview.show{display:block}
-.preview ol{margin:6px 0 0 20px;color:var(--text)}
-.preview .warn{color:var(--danger)}
-footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.78em}
-footer a{color:var(--muted)}
+.msg{font-size:.88em;margin-top:10px;min-height:1.6em;white-space:pre-wrap;word-break:break-all}
+.msg.ok{color:var(--ok)} .msg.err{color:var(--danger)} .msg.info{color:var(--muted)}
+.msg a{color:var(--gold)}
+details{margin-top:14px}
+details summary{cursor:pointer;color:var(--muted);font-size:.85em}
+details.settings{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 18px}
+details.settings summary{color:var(--gold);font-size:.88em}
+details .hint{font-size:.78em;color:var(--muted);margin-top:8px;line-height:1.7}
+footer{margin-top:26px;text-align:center;font-size:.8em}
+footer a{color:var(--muted);text-decoration:none}
+.link{color:var(--gold);text-decoration:underline}
 </style>
 </head>
 <body>
 <div class="wrap">
   <header class="top">
-    <h1>管理后台</h1>
-    <p>书架 · 发布章节 / 导入新书（本站不做索引，请勿外传此页）</p>
+    <h1>上传</h1>
+    <p>txt 扔进来，自动排版发布</p>
   </header>
 
-  <section class="card">
-    <h2>一、仓库设置（只需填一次）</h2>
-    <label>仓库 <input id="repo" value="Htotis/changtianyouhen" placeholder="用户名/仓库名"></label>
-    <label>分支 <input id="branch" value="main"></label>
-    <label>Token（密码框，只存你本机浏览器）
-      <input id="token" type="password" placeholder="粘贴 GitHub Personal Access Token" autocomplete="off">
-    </label>
-    <div class="row">
-      <button class="btn" id="saveCfg">保存设置</button>
-      <button class="btn" id="testConn">测试连接</button>
-    </div>
-    <p class="hint">Token 获取：GitHub → 头像 → Settings → Developer settings → Personal access tokens → <code>Fine-grained tokens</code> → Generate new token，只给<b>这一个仓库</b>的 <code>Contents</code> 读写权限（Read and write）。Token 只保存在你当前设备的浏览器 localStorage 里，本页面不会把它发给除 GitHub 之外的任何地方。</p>
-    <div class="msg" id="cfgMsg"></div>
-  </section>
+  <div class="drop" id="drop">
+    <div class="plus">＋</div>
+    <p>把 <b>.txt</b> 拖到这里，或<span class="link">点击选择文件</span></p>
+    <p class="sub">单章会自动追加，多章会自动建成一本新书</p>
+    <input type="file" id="file" accept=".txt" hidden>
+  </div>
+  <textarea class="paste" id="paste" placeholder="…或者把全文粘贴到这里"></textarea>
 
-  <section class="card">
-    <h2>二、发布单章节</h2>
-    <label>目标书
-      <select id="bookSel"></select>
-    </label>
-    <div class="row" style="margin-bottom:12px">
-      <button class="btn" id="fetchLatest">获取最新章节号</button>
-      <span class="latest-tag" id="latestInfo"></span>
+  <section class="card" id="panel" hidden>
+    <div class="detect" id="detectInfo"></div>
+
+    <div id="fBook" hidden>
+      <label>书名 <input id="bTitle"></label>
+      <div class="grid2">
+        <label>作者 <input id="bAuthor" placeholder="笔名"></label>
+        <label>类型 <input id="bGenre" placeholder="如：都市"></label>
+      </div>
+      <label>简介 <textarea id="bIntro" rows="2" placeholder="一句话梗概（可不填）"></textarea></label>
+      <details>
+        <summary>水印过滤（可选）</summary>
+        <label style="margin-top:8px">含这些文字的行会被删掉，每行一条
+          <textarea id="bFilter" rows="2" placeholder="如：更多书籍尽在"></textarea>
+        </label>
+        <button class="btn btn--sm" id="reAnalyze">重新分析</button>
+      </details>
     </div>
-    <label>章节号 <input id="chN" type="number" min="1" placeholder="如：31"></label>
-    <label>章节标题 <input id="chT" placeholder="如：三战·藏（可从正文首行自动识别）"></label>
-    <label>正文（粘贴，或从下面的文件选择）
-      <textarea id="chBody" rows="10" placeholder="把章节正文粘贴到这里…"></textarea>
-    </label>
-    <input type="file" id="chFile" accept=".txt">
-    <div class="row">
-      <button class="btn btn--primary" id="publish">发布章节</button>
+
+    <div id="fChapter" hidden>
+      <label>目标书 <select id="cBook"></select></label>
+      <div class="grid2">
+        <label>章节号 <input id="cN" type="number" min="1"></label>
+        <label>标题 <input id="cT"></label>
+      </div>
+      <p class="note" id="cNote"></p>
     </div>
+
+    <button class="btn btn--primary btn--big" id="publish">发布</button>
     <div class="prog" id="prog"><i></i></div>
-    <div class="msg" id="pubMsg"></div>
+    <div class="msg" id="msg"></div>
   </section>
 
-  <section class="card">
-    <h2>三、导入整本新书（自动排版）</h2>
-    <label>小说 txt（粘贴全文，或从下面的文件选择）
-      <textarea id="nbBody" rows="8" placeholder="把整本小说的 txt 全文粘贴到这里…"></textarea>
-    </label>
-    <input type="file" id="nbFile" accept=".txt">
-    <label>过滤行（每行一条：正文里含有这些文字的行会被删掉，如盗版站水印、广告语）
-      <textarea id="nbFilter" rows="2" placeholder="例如：更多书籍尽在"></textarea>
-    </label>
-    <div class="row">
-      <button class="btn" id="analyzeBtn">开始分析排版</button>
+  <details class="settings" id="settingsBox">
+    <summary>设置（仓库 / Token，只需填一次）</summary>
+    <div style="margin-top:10px">
+      <label>仓库 <input id="repo" value="Htotis/changtianyouhen"></label>
+      <label>分支 <input id="branch" value="main"></label>
+      <label>Token <input id="token" type="password" placeholder="GitHub Personal Access Token" autocomplete="off"></label>
+      <p class="hint">GitHub → 头像 → Settings → Developer settings → Personal access tokens → Fine-grained tokens，只给这个仓库 Contents 读写权限。只存你本机浏览器，不会发给除 GitHub 之外的地方。</p>
     </div>
-    <div class="preview" id="nbPreview"></div>
-    <div class="grid2" style="margin-top:12px">
-      <label>书名 <input id="nbTitle" placeholder="如：霓虹深处"></label>
-      <label>作者 <input id="nbAuthor" placeholder="笔名"></label>
-      <label>作品ID（英文/数字/短横线） <input id="nbId" placeholder="如：nihong-shenchu，留空自动生成"></label>
-      <label>封面字 <input id="nbCover" placeholder="默认与书名相同"></label>
-      <label>类型 <input id="nbGenre" placeholder="如：都市"></label>
-      <label>状态 <input id="nbStatus" value="连载中"></label>
-    </div>
-    <label>简介 <textarea id="nbIntro" rows="3" placeholder="一句话或一段梗概"></textarea></label>
-    <label>标签（空格分隔） <input id="nbTags" placeholder="如：都市 情感"></label>
-    <div class="row" style="margin-top:4px">
-      <button class="btn btn--primary" id="importBtn" disabled>确认发布整本</button>
-    </div>
-    <div class="prog" id="prog2"><i></i></div>
-    <div class="msg" id="nbMsg"></div>
-    <p class="hint">排版规则：按「第X章」自动切章；首行若为「第X章 标题」会自动提取标题并删掉该行；多余空行自动清理；每章单独存为一页，阅读器按需加载。发布后 GitHub Pages 约 1–2 分钟生效。若作品ID已存在，会覆盖为新版（请谨慎）。</p>
-  </section>
+  </details>
 
   <footer><a href="index.html">← 返回书架</a></footer>
 </div>
@@ -132,11 +121,10 @@ footer a{color:var(--muted)}
 "use strict";
 var $ = function(id){ return document.getElementById(id); };
 var LS_KEY = "ctyh_admin_cfg_v1";
+var pending = null; // {mode:'book'|'chapter', chapters:[{t,p}], rawText}
 
-/* ---------------- 通用 ---------------- */
-function loadCfg(){
-  try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch(e){ return {}; }
-}
+/* ---------------- 基础 ---------------- */
+function loadCfg(){ try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch(e){ return {}; } }
 function getCfg(){
   var c = loadCfg();
   c.repo = ($("repo").value || c.repo || "").trim();
@@ -150,43 +138,32 @@ function fillCfg(){
   if(c.branch) $("branch").value = c.branch;
   if(c.token) $("token").value = c.token;
 }
-function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
-function b64decode(b64){ return decodeURIComponent(escape(atob(String(b64).replace(/\s/g,"")))); }
-function setMsg(id, text, cls){ var el = $(id); el.className = "msg " + (cls||""); el.innerHTML = text; }
-function setProg(id, p){
-  var w = $(id); w.classList.add("show");
-  w.firstElementChild.style.width = p + "%";
-  if(p >= 100){ setTimeout(function(){ w.classList.remove("show"); }, 900); }
-}
+function b64encode(s){ return btoa(unescape(encodeURIComponent(s))); }
+function b64decode(b){ return decodeURIComponent(escape(atob(String(b).replace(/\s/g,"")))); }
 function esc(s){ return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;"); }
-
-/* contents API（单文件读写） */
+function setMsg(t, cls, html){ var el = $("msg"); el.className = "msg " + (cls||""); el[html ? "innerHTML" : "textContent"] = t; }
+function setProg(p){
+  var w = $("prog"); w.classList.add("show");
+  w.firstElementChild.style.width = p + "%";
+  if(p >= 100) setTimeout(function(){ w.classList.remove("show"); }, 900);
+}
 function api(path, method, body){
   var c = getCfg();
-  if(!c.repo || !c.token) return Promise.reject(new Error("请先填写仓库和 Token 并保存设置。"));
+  if(!c.repo || !c.token) return Promise.reject(new Error("no-token"));
   var url = "https://api.github.com/repos/" + c.repo + "/contents/" + path;
   if((method || "GET") === "GET") url += "?ref=" + encodeURIComponent(c.branch || "main");
   return fetch(url, {
     method: method || "GET",
-    headers: {
-      "Authorization": "Bearer " + c.token,
-      "Accept": "application/vnd.github+json",
-      "Content-Type": "application/json"
-    },
+    headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined
   }).then(checkResp);
 }
-/* git data API（批量提交用） */
 function ghApi(path, method, body){
   var c = getCfg();
-  if(!c.repo || !c.token) return Promise.reject(new Error("请先填写仓库和 Token 并保存设置。"));
+  if(!c.repo || !c.token) return Promise.reject(new Error("no-token"));
   return fetch("https://api.github.com" + path, {
     method: method || "GET",
-    headers: {
-      "Authorization": "Bearer " + c.token,
-      "Accept": "application/vnd.github+json",
-      "Content-Type": "application/json"
-    },
+    headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json", "Content-Type": "application/json" },
     body: body ? JSON.stringify(body) : undefined
   }).then(checkResp);
 }
@@ -198,156 +175,10 @@ function checkResp(r){
   });
   return r.json();
 }
-function parseBookJs(text){
-  return JSON.parse(text.replace(/^window\.BOOK\s*=\s*/, "").replace(/;\s*$/, ""));
-}
-function parseBooksJs(text){
-  return JSON.parse(text.replace(/^window\.BOOKS\s*=\s*/, "").replace(/;\s*$/, ""));
-}
-function selectedBook(){
-  var sel = $("bookSel");
-  var id = sel.value;
-  var list = window.BOOKS || [];
-  for(var i = 0; i < list.length; i++){ if(list[i].id === id) return list[i]; }
-  return list[0] || { id: "changtianyouhen", dir: "data", title: "长天有痕" };
-}
-function bookDir(){ return (selectedBook().dir || "data").replace(/\/$/, ""); }
-function refreshBookSel(){
-  var list = window.BOOKS || [];
-  var sel = $("bookSel");
-  var cur = sel.value;
-  sel.innerHTML = list.map(function(b){
-    return '<option value="' + esc(b.id) + '">' + esc(b.title) + "</option>";
-  }).join("");
-  if(cur) sel.value = cur;
-}
+function parseBookJs(t){ return JSON.parse(t.replace(/^window\.BOOK\s*=\s*/, "").replace(/;\s*$/, "")); }
+function parseBooksJs(t){ return JSON.parse(t.replace(/^window\.BOOKS\s*=\s*/, "").replace(/;\s*$/, "")); }
 
-/* ---------------- 一、设置 ---------------- */
-$("saveCfg").onclick = function(){
-  var c = getCfg();
-  if(!c.repo || !c.token){ setMsg("cfgMsg", "仓库和 Token 都要填。", "err"); return; }
-  localStorage.setItem(LS_KEY, JSON.stringify(c));
-  setMsg("cfgMsg", "已保存到本机浏览器。", "ok");
-};
-$("testConn").onclick = function(){
-  var c = getCfg();
-  if(!c.repo || !c.token){ setMsg("cfgMsg", "请先填写仓库和 Token 并保存设置。", "err"); return; }
-  setMsg("cfgMsg", "正在连接…", "info");
-  fetch("https://api.github.com/repos/" + c.repo, {
-    headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json" }
-  }).then(function(r){
-    if(r.status === 200) return r.json();
-    throw new Error("连接失败，HTTP " + r.status + "（检查仓库名和 Token 权限）");
-  }).then(function(j){
-    localStorage.setItem(LS_KEY, JSON.stringify(c));
-    setMsg("cfgMsg", "连接成功：<b>" + esc(j.full_name) + "</b>（" + (j.private ? "私有" : "公开") + "仓库，默认分支 " + esc(j.default_branch) + "）", "ok");
-  }).catch(function(e){ setMsg("cfgMsg", esc(e.message), "err"); });
-};
-
-/* ---------------- 二、单章节 ---------------- */
-function splitTitle(lines, presetTitle){
-  var title = (presetTitle || "").trim();
-  if(lines.length && /^第[一二三四五六七八九十百千零\d两]+章/.test(lines[0].trim())){
-    var parts = lines[0].trim().split(/[\s　]+/);
-    if(parts.length > 1 && !title) title = parts.slice(1).join(" ").trim();
-    lines = lines.slice(1);
-  }
-  return { title: title, lines: lines };
-}
-$("fetchLatest").onclick = function(){
-  setMsg("pubMsg", "", "");
-  $("latestInfo").textContent = "读取中…";
-  api(bookDir() + "/book.js").then(function(f){
-    var book = parseBookJs(b64decode(f.content));
-    var nums = book.chapters.map(function(c){ return c.n; });
-    var latest = nums.length ? Math.max.apply(null, nums) : 0;
-    $("latestInfo").textContent = "《" + selectedBook().title + "》共 " + nums.length + " 章，最新章节：第 " + latest + " 章";
-    $("chN").value = latest + 1;
-  }).catch(function(e){ $("latestInfo").textContent = ""; setMsg("pubMsg", esc(e.message), "err"); });
-};
-$("chFile").onchange = function(){
-  var f = this.files && this.files[0];
-  if(!f) return;
-  var rd = new FileReader();
-  rd.onload = function(){ $("chBody").value = String(rd.result || ""); setMsg("pubMsg", "已载入文件：" + esc(f.name) + "，请核对标题后发布。", "info"); };
-  rd.readAsText(f, "utf-8");
-};
-$("publish").onclick = function(){
-  var n = parseInt($("chN").value, 10);
-  var raw = ($("chBody").value || "").replace(/\r\n?/g, "\n");
-  if(!(n > 0)){ setMsg("pubMsg", "请填写章节号。", "err"); return; }
-  var lines = raw.split("\n");
-  var sp = splitTitle(lines, $("chT").value);
-  if(!sp.title){ setMsg("pubMsg", "请填写章节标题（或让正文首行带「第X章 标题」自动识别）。", "err"); return; }
-  var paras = sp.lines.map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
-  if(!paras.length){ setMsg("pubMsg", "正文是空的。", "err"); return; }
-
-  var bk = selectedBook(), dir = bookDir();
-  var btn = $("publish");
-  btn.disabled = true;
-  setProg("prog", 8);
-  setMsg("pubMsg", "正在读取《" + esc(bk.title) + "》目录…", "info");
-
-  var pad = String(n).padStart(3, "0");
-  var chPath = dir + "/ch/" + pad + ".js";
-  var cfg = getCfg();
-
-  api(dir + "/book.js").then(function(bookFile){
-    var book = parseBookJs(b64decode(bookFile.content));
-    var exists = book.chapters.some(function(c){ return c.n === n; });
-    if(exists && !window.confirm("第 " + n + " 章已存在，确定要覆盖吗？")){
-      throw { cancelled: true };
-    }
-    setProg("prog", 25);
-    setMsg("pubMsg", "正在写入第 " + n + " 章正文…", "info");
-    var text = paras.join("\n");
-    var charCount = text.replace(/\s/g, "").length;
-    var chContent = "window.CHAPTER=" + JSON.stringify({ n: n, t: sp.title, p: paras }) + ";";
-
-    var putChapter = function(sha){
-      var body = { message: (exists ? "更新" : "新增") + "《" + bk.title + "》第" + n + "章 " + sp.title, content: b64encode(chContent), branch: cfg.branch };
-      if(sha) body.sha = sha;
-      return api(chPath, "PUT", body);
-    };
-
-    var p = exists
-      ? api(chPath).then(function(f){ return putChapter(f.sha); }, function(){ return putChapter(null); })
-      : putChapter(null);
-
-    return p.then(function(){
-      setProg("prog", 55);
-      setMsg("pubMsg", "正在更新目录…", "info");
-      book.chapters = book.chapters.filter(function(c){ return c.n !== n; });
-      book.chapters.push({ n: n, t: sp.title, c: charCount, w: Math.round(charCount / 100) / 10 });
-      book.chapters.sort(function(a,b){ return a.n - b.n; });
-      book.totalChars = book.chapters.reduce(function(s,c){ return s + c.c; }, 0);
-      book.totalWords = Math.round(book.totalChars / 100) / 10;
-      book.latest = Math.max.apply(null, book.chapters.map(function(c){ return c.n; }));
-      var newText = "window.BOOK=\n" + JSON.stringify(book, null, 2) + ";\n";
-      return api(dir + "/book.js", "PUT", {
-        message: "更新《" + bk.title + "》目录：第" + n + "章 " + sp.title,
-        content: b64encode(newText),
-        branch: cfg.branch,
-        sha: bookFile.sha
-      });
-    }).then(function(){
-      setProg("prog", 100);
-      var siteBase = location.href.replace(/admin\.html.*$/, "");
-      setMsg("pubMsg",
-        "发布成功！《" + esc(bk.title) + "》第 " + n + " 章《" + esc(sp.title) + "》已写入仓库。\n" +
-        "GitHub Pages 约 1–2 分钟后生效：<a href=\"" + siteBase + "read.html?b=" + encodeURIComponent(bk.id) + "&c=" + n + "\" target=\"_blank\">打开第 " + n + " 章看看 →</a>",
-        "ok");
-    });
-  }).catch(function(e){
-    if(e && e.cancelled){ setMsg("pubMsg", "已取消。", "info"); }
-    else setMsg("pubMsg", "失败：" + esc(e && e.message ? e.message : e), "err");
-    setProg("prog", 100);
-  }).then(function(){ btn.disabled = false; });
-};
-
-/* ---------------- 三、整本导入 ---------------- */
-var pendingImport = null;
-
+/* ---------------- 自动排版 ---------------- */
 function analyzeNovel(raw, filters){
   var text = String(raw || "").replace(/^﻿/, "").replace(/\r\n?/g, "\n");
   var fl = (filters || []).map(function(s){ return s.trim(); }).filter(Boolean);
@@ -361,11 +192,8 @@ function analyzeNovel(raw, filters){
   }
   var headRe = /^第[一二三四五六七八九十百千零\d两]+章/;
   var heads = [];
-  lines.forEach(function(s, i){
-    if(s.length <= 42 && headRe.test(s)) heads.push(i);
-  });
-  if(!heads.length) return { error: "未识别到章节标记。请确认正文里有形如「第一章 标题」的章节行。" };
-
+  lines.forEach(function(s, i){ if(s.length <= 42 && headRe.test(s)) heads.push(i); });
+  if(!heads.length) return { error: "没识别到章节标记，正文里要有「第一章 标题」这样的章节行。" };
   var pre = lines.slice(0, heads[0]).filter(Boolean);
   var guessTitle = "", guessAuthor = "";
   pre.forEach(function(s){
@@ -377,79 +205,151 @@ function analyzeNovel(raw, filters){
     if(/^作者[：:]/.test(s)) continue;
     if(s.length >= 2 && s.length <= 20){ guessTitle = s; break; }
   }
-
   var chapters = [];
   heads.forEach(function(h, k){
     var end = (k + 1 < heads.length) ? heads[k + 1] : lines.length;
     var hm = /^第[一二三四五六七八九十百千零\d两]+章(.*)$/.exec(lines[h]);
     var title = hm ? hm[1].replace(/^[\s　:：·・\-—]+/, "").trim() : "";
     if(!title) title = "第" + (k + 1) + "章";
-    var paras = lines.slice(h + 1, end).filter(Boolean);
-    chapters.push({ t: title, p: paras });
+    chapters.push({ t: title, p: lines.slice(h + 1, end).filter(Boolean) });
   });
   return { chapters: chapters, guessTitle: guessTitle, guessAuthor: guessAuthor };
 }
+function totalChars(chs){
+  return chs.reduce(function(s, ch){ return s + ch.p.join("\n").replace(/\s/g, "").length; }, 0);
+}
 
-$("nbFile").onchange = function(){
+/* ---------------- 输入 ---------------- */
+var drop = $("drop"), fileInput = $("file"), paste = $("paste");
+drop.addEventListener("click", function(){ fileInput.click(); });
+["dragover","dragenter"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.add("over"); });
+});
+["dragleave","drop"].forEach(function(ev){
+  drop.addEventListener(ev, function(e){ e.preventDefault(); drop.classList.remove("over"); });
+});
+drop.addEventListener("drop", function(e){
+  var f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if(f) readFile(f);
+});
+fileInput.addEventListener("change", function(){
   var f = this.files && this.files[0];
-  if(!f) return;
+  if(f) readFile(f);
+  this.value = "";
+});
+function readFile(f){
   var rd = new FileReader();
-  rd.onload = function(){
-    $("nbBody").value = String(rd.result || "");
-    setMsg("nbMsg", "已载入文件：" + esc(f.name) + "（" + Math.round(f.size / 1024) + " KB），点「开始分析排版」。", "info");
-  };
+  rd.onload = function(){ handleText(String(rd.result || ""), []); };
   rd.readAsText(f, "utf-8");
-};
+}
+var pasteTimer = null;
+paste.addEventListener("input", function(){
+  clearTimeout(pasteTimer);
+  pasteTimer = setTimeout(function(){
+    if(paste.value.trim()) handleText(paste.value, []);
+  }, 800);
+});
+$("reAnalyze").addEventListener("click", function(){
+  if(pending) handleText(pending.rawText, $("bFilter").value.split("\n"));
+});
 
-$("analyzeBtn").onclick = function(){
-  setMsg("nbMsg", "", "");
-  pendingImport = null;
-  $("importBtn").disabled = true;
-  var pv = $("nbPreview");
-  pv.classList.remove("show");
-  var res = analyzeNovel($("nbBody").value, $("nbFilter").value.split("\n"));
-  if(res.error){ setMsg("nbMsg", res.error, "err"); return; }
-  if(res.guessTitle && !$("nbTitle").value.trim()) $("nbTitle").value = res.guessTitle;
-  if(res.guessAuthor && !$("nbAuthor").value.trim()) $("nbAuthor").value = res.guessAuthor;
-  pendingImport = res;
-  var totalChars = res.chapters.reduce(function(s, ch){
-    return s + ch.p.join("\n").replace(/\s/g, "").length;
-  }, 0);
-  var empty = res.chapters.filter(function(ch){ return !ch.p.length; }).length;
-  var list = res.chapters.slice(0, 12).map(function(ch, i){
-    return "<li>第 " + (i + 1) + " 章　" + esc(ch.t) + "（" + ch.p.length + " 段）</li>";
+function handleText(raw, filters){
+  setMsg("", "");
+  var res = analyzeNovel(raw, filters);
+  if(res.error){ $("panel").hidden = true; pending = null; setMsg(res.error, "err"); return; }
+  pending = { chapters: res.chapters, rawText: raw, filters: filters };
+  var n = res.chapters.length;
+  var words = Math.round(totalChars(res.chapters) / 100) / 10;
+  $("panel").hidden = false;
+
+  if(n >= 2){
+    /* ---- 整本新书 ---- */
+    pending.mode = "book";
+    $("fBook").hidden = false;
+    $("fChapter").hidden = true;
+    if(!$("bTitle").value.trim() && res.guessTitle) $("bTitle").value = res.guessTitle;
+    if(!$("bAuthor").value.trim() && res.guessAuthor) $("bAuthor").value = res.guessAuthor;
+    var preview = res.chapters.slice(0, 5).map(function(c, i){ return "第" + (i+1) + "章 " + c.t; }).join("、");
+    $("detectInfo").innerHTML = "识别为 <b>整本新书</b>：共 " + n + " 章，约 " + words + " 万字" +
+      "<small>" + esc(preview) + (n > 5 ? " …" : "") + "</small>";
+    $("publish").textContent = "发布整本新书";
+  } else {
+    /* ---- 单章节 ---- */
+    pending.mode = "chapter";
+    $("fBook").hidden = true;
+    $("fChapter").hidden = false;
+    $("cT").value = res.chapters[0].t;
+    $("detectInfo").innerHTML = "识别为 <b>单章节</b>：《" + esc(res.chapters[0].t) + "》，约 " +
+      (Math.round(res.chapters[0].p.join("\n").replace(/\s/g,"").length / 100) / 10) + " 万字" +
+      "<small>将追加到下面选中的书</small>";
+    $("publish").textContent = "发布章节";
+    refreshLatest();
+  }
+  setMsg("核对上方信息，无误后点发布。", "info");
+  $("panel").scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+/* ---------------- 单章：目标书与最新章节号（公开数据，无需 Token） ---------------- */
+function refreshBookSel(){
+  var list = window.BOOKS || [];
+  var sel = $("cBook"), cur = sel.value;
+  sel.innerHTML = list.map(function(b){
+    return '<option value="' + esc(b.id) + '">' + esc(b.title) + "</option>";
   }).join("");
-  pv.innerHTML =
-    "识别到 <b>" + res.chapters.length + "</b> 章，约 <b>" + (Math.round(totalChars / 100) / 10) + "</b> 万字" +
-    (empty ? '　<span class="warn">其中 ' + empty + " 章正文为空，请检查！</span>" : "") +
-    "<ol>" + list + "</ol>" +
-    (res.chapters.length > 12 ? "<div>…等共 " + res.chapters.length + " 章</div>" : "") +
-    "<div style='margin-top:6px'>核对无误后填写下方书籍信息，点「确认发布整本」。</div>";
-  pv.classList.add("show");
-  $("importBtn").disabled = false;
-  setMsg("nbMsg", "分析完成，请核对章节数与标题，填写书籍信息后发布。", "ok");
-};
+  if(cur) sel.value = cur;
+}
+function selectedBook(){
+  var list = window.BOOKS || [], id = $("cBook").value;
+  for(var i = 0; i < list.length; i++) if(list[i].id === id) return list[i];
+  return list[0];
+}
+function refreshLatest(){
+  var bk = selectedBook();
+  if(!bk) return;
+  var dir = (bk.dir || "data").replace(/\/$/, "");
+  $("cNote").textContent = "正在读取《" + bk.title + "》…";
+  fetch(dir + "/book.js").then(function(r){
+    if(!r.ok) throw new Error("http " + r.status);
+    return r.text();
+  }).then(function(t){
+    var book = parseBookJs(t);
+    var nums = book.chapters.map(function(c){ return c.n; });
+    var latest = nums.length ? Math.max.apply(null, nums) : 0;
+    $("cN").value = latest + 1;
+    $("cNote").textContent = "《" + bk.title + "》共 " + nums.length + " 章，将发布为第 " + (latest + 1) + " 章";
+    pending.latestNums = nums;
+  }).catch(function(){
+    $("cNote").textContent = "《" + bk.title + "》目录读取失败，请手动填写章节号";
+  });
+}
+$("cBook").addEventListener("change", refreshLatest);
 
-/* Git Data API 批量提交：一次 commit 写完所有文件 */
-function bulkPublish(files, message){
+/* ---------------- 发布 ---------------- */
+function needToken(){
   var c = getCfg();
-  var branch = c.branch || "main";
-  var repo = c.repo;
-  setProg("prog2", 5);
+  if(!c.token){
+    $("settingsBox").open = true;
+    setMsg("请先在下方「设置」里填写 Token（只需一次，之后自动记住）。", "err");
+    $("token").focus();
+    return null;
+  }
+  localStorage.setItem(LS_KEY, JSON.stringify(c));
+  return c;
+}
+
+function bulkPublish(files, message, progBase){
+  var c = getCfg(), branch = c.branch || "main", repo = c.repo;
   return ghApi("/repos/" + repo + "/git/ref/heads/" + branch).then(function(ref){
     var baseCommit = ref.object.sha;
     return ghApi("/repos/" + repo + "/git/commits/" + baseCommit).then(function(cm){
-      var baseTree = cm.tree.sha;
-      var blobs = [];
+      var baseTree = cm.tree.sha, blobs = [];
       function batch(i){
-        var slice = files.slice(i, i + 8);
-        return Promise.all(slice.map(function(f){
-          return ghApi("/repos/" + repo + "/git/blobs", "POST", {
-            content: b64encode(f.content), encoding: "base64"
-          }).then(function(b){ return { path: f.path, sha: b.sha }; });
+        return Promise.all(files.slice(i, i + 8).map(function(f){
+          return ghApi("/repos/" + repo + "/git/blobs", "POST", { content: b64encode(f.content), encoding: "base64" })
+            .then(function(b){ return { path: f.path, sha: b.sha }; });
         })).then(function(res){
           blobs = blobs.concat(res);
-          setProg("prog2", 8 + Math.round(72 * Math.min(1, (i + 8) / files.length)));
+          setProg(progBase + Math.round(70 * Math.min(1, (i + 8) / files.length)));
           if(i + 8 < files.length) return batch(i + 8);
         });
       }
@@ -459,107 +359,135 @@ function bulkPublish(files, message){
           tree: blobs.map(function(b){ return { path: b.path, mode: "100644", type: "blob", sha: b.sha }; })
         });
       }).then(function(tree){
-        setProg("prog2", 88);
-        return ghApi("/repos/" + repo + "/git/commits", "POST", {
-          message: message, tree: tree.sha, parents: [baseCommit]
-        });
+        return ghApi("/repos/" + repo + "/git/commits", "POST", { message: message, tree: tree.sha, parents: [baseCommit] });
       }).then(function(commit){
-        setProg("prog2", 95);
         return ghApi("/repos/" + repo + "/git/ref/heads/" + branch, "PATCH", { sha: commit.sha });
       });
     });
   });
 }
 
-$("importBtn").onclick = function(){
-  if(!pendingImport){ setMsg("nbMsg", "请先点「开始分析排版」。", "err"); return; }
-  var title = $("nbTitle").value.trim();
-  if(!title){ setMsg("nbMsg", "请填写书名。", "err"); return; }
-  var slug = $("nbId").value.trim() || ("novel-" + Date.now().toString(36));
-  if(!/^[a-z0-9][a-z0-9-]*$/.test(slug)){
-    setMsg("nbMsg", "作品ID只能用小写英文、数字、短横线，如 nihong-shenchu。", "err");
-    return;
-  }
-  var author = $("nbAuthor").value.trim() || "待填";
-  var dir = "data/books/" + slug;
-  var btn = $("importBtn");
+$("publish").addEventListener("click", function(){
+  if(!pending) return;
+  var cfg = needToken();
+  if(!cfg) return;
+  var btn = $("publish");
   btn.disabled = true;
-  setProg("prog2", 3);
-  setMsg("nbMsg", "正在准备 " + pendingImport.chapters.length + " 个文件…", "info");
+  setProg(5);
+  (pending.mode === "book" ? publishBook(cfg) : publishChapter(cfg))
+    .catch(function(e){
+      setMsg("失败：" + (e && e.message === "no-token" ? "请先填写 Token。" : esc(e && e.message ? e.message : e)), "err");
+      setProg(100);
+    })
+    .then(function(){ btn.disabled = false; });
+});
 
-  var chapters = pendingImport.chapters;
-  var bookChapters = chapters.map(function(ch, i){
-    var n = i + 1;
-    var c = ch.p.join("\n").replace(/\s/g, "").length;
-    return { n: n, t: ch.t, c: c, w: Math.round(c / 100) / 10 };
-  });
-  var totalChars = bookChapters.reduce(function(s, c){ return s + c.c; }, 0);
-  var totalWords = Math.round(totalChars / 100) / 10;
-
-  var bookObj = {
-    title: title,
-    author: author,
-    genre: $("nbGenre").value.trim() || "未分类",
-    status: $("nbStatus").value.trim() || "连载中",
-    coverText: $("nbCover").value.trim() || title,
-    intro: $("nbIntro").value.trim(),
-    tags: $("nbTags").value.trim().split(/\s+/).filter(Boolean),
-    chapters: bookChapters,
-    totalChars: totalChars,
-    totalWords: totalWords,
-    latest: chapters.length
-  };
-
-  var files = [{ path: dir + "/book.js", content: "window.BOOK=\n" + JSON.stringify(bookObj, null, 2) + ";\n" }];
-  chapters.forEach(function(ch, i){
-    var n = i + 1;
-    var pad = String(n).padStart(3, "0");
-    files.push({
-      path: dir + "/ch/" + pad + ".js",
-      content: "window.CHAPTER=" + JSON.stringify({ n: n, t: ch.t, p: ch.p }) + ";"
-    });
-  });
-
-  api("data/books.js").then(function(f){
+function publishBook(cfg){
+  var title = $("bTitle").value.trim();
+  if(!title){ setMsg("请填写书名。", "err"); return Promise.resolve(); }
+  var baseSlug = "novel-" + Date.now().toString(36);
+  setMsg("正在准备 " + pending.chapters.length + " 个文件…", "info");
+  return api("data/books.js").then(function(f){
     var books = parseBooksJs(b64decode(f.content));
-    var exists = books.some(function(b){ return b.id === slug; });
-    if(exists && !window.confirm("作品ID「" + slug + "」已存在，确定要用新版覆盖整本书吗？")){
-      throw { cancelled: true };
-    }
-    books = books.filter(function(b){ return b.id !== slug; });
-    books.push({
-      id: slug, dir: dir, title: title, author: author,
-      genre: bookObj.genre, status: bookObj.status, coverText: bookObj.coverText,
-      intro: bookObj.intro, tags: bookObj.tags,
-      chapters: chapters.length, totalWords: totalWords, latest: chapters.length
+    var ids = {};
+    books.forEach(function(b){ ids[b.id] = true; });
+    var slug = baseSlug, k = 2;
+    while(ids[slug]){ slug = baseSlug + "-" + (k++); }
+
+    var dir = "data/books/" + slug;
+    var chs = pending.chapters;
+    var bookChapters = chs.map(function(ch, i){
+      var c = ch.p.join("\n").replace(/\s/g, "").length;
+      return { n: i + 1, t: ch.t, c: c, w: Math.round(c / 100) / 10 };
     });
+    var tc = bookChapters.reduce(function(s, c){ return s + c.c; }, 0);
+    var tw = Math.round(tc / 100) / 10;
+    var bookObj = {
+      title: title,
+      author: $("bAuthor").value.trim() || "待填",
+      genre: $("bGenre").value.trim() || "未分类",
+      status: "连载中",
+      coverText: title,
+      intro: $("bIntro").value.trim(),
+      tags: [],
+      chapters: bookChapters,
+      totalChars: tc, totalWords: tw, latest: chs.length
+    };
+    var files = [{ path: dir + "/book.js", content: "window.BOOK=\n" + JSON.stringify(bookObj, null, 2) + ";\n" }];
+    chs.forEach(function(ch, i){
+      var pad = String(i + 1).padStart(3, "0");
+      files.push({ path: dir + "/ch/" + pad + ".js",
+        content: "window.CHAPTER=" + JSON.stringify({ n: i + 1, t: ch.t, p: ch.p }) + ";" });
+    });
+    books.push({ id: slug, dir: dir, title: title, author: bookObj.author,
+      genre: bookObj.genre, status: bookObj.status, coverText: title,
+      intro: bookObj.intro, tags: [], chapters: chs.length, totalWords: tw, latest: chs.length });
     files.push({ path: "data/books.js", content: "window.BOOKS=\n" + JSON.stringify(books, null, 2) + ";\n" });
-    setMsg("nbMsg", "正在上传 " + files.length + " 个文件（一次提交）…", "info");
-    return bulkPublish(files, "导入新书《" + title + "》（" + chapters.length + "章）");
+    setMsg("正在上传 " + files.length + " 个文件…", "info");
+    return bulkPublish(files, "导入新书《" + title + "》（" + chs.length + "章）", 8).then(function(){
+      setProg(100);
+      var base = location.href.replace(/admin\.html.*$/, "");
+      setMsg("发布成功！《" + title + "》共 " + chs.length + " 章，约 1–2 分钟后生效：" +
+        '<a href="' + base + "book.html?id=" + encodeURIComponent(slug) + '" target="_blank">打开看看 →</a>', "ok", true);
+      pending = null;
+    });
+  });
+}
+
+function publishChapter(cfg){
+  var bk = selectedBook();
+  var dir = (bk.dir || "data").replace(/\/$/, "");
+  var n = parseInt($("cN").value, 10);
+  var t = $("cT").value.trim();
+  if(!(n > 0)){ setMsg("请填写章节号。", "err"); return Promise.resolve(); }
+  if(!t){ setMsg("请填写章节标题。", "err"); return Promise.resolve(); }
+  var ch = pending.chapters[0];
+  var paras = ch.p;
+  if(!paras.length){ setMsg("正文是空的。", "err"); return Promise.resolve(); }
+  var pad = String(n).padStart(3, "0");
+  var chPath = dir + "/ch/" + pad + ".js";
+  var exists = pending.latestNums && pending.latestNums.indexOf(n) >= 0;
+
+  setMsg((exists ? "第 " + n + " 章已存在，将直接覆盖。" : "正在写入第 " + n + " 章…"), "info");
+  setProg(20);
+  var text = paras.join("\n");
+  var cc = text.replace(/\s/g, "").length;
+  var chContent = "window.CHAPTER=" + JSON.stringify({ n: n, t: t, p: paras }) + ";";
+
+  var putCh = function(sha){
+    var body = { message: (exists ? "更新" : "新增") + "《" + bk.title + "》第" + n + "章 " + t,
+      content: b64encode(chContent), branch: cfg.branch };
+    if(sha) body.sha = sha;
+    return api(chPath, "PUT", body);
+  };
+  var p = exists
+    ? api(chPath).then(function(f){ return putCh(f.sha); }, function(){ return putCh(null); })
+    : putCh(null);
+
+  return p.then(function(){
+    setProg(55);
+    return api(dir + "/book.js");
+  }).then(function(bookFile){
+    var book = parseBookJs(b64decode(bookFile.content));
+    book.chapters = book.chapters.filter(function(c){ return c.n !== n; });
+    book.chapters.push({ n: n, t: t, c: cc, w: Math.round(cc / 100) / 10 });
+    book.chapters.sort(function(a, b){ return a.n - b.n; });
+    book.totalChars = book.chapters.reduce(function(s, c){ return s + c.c; }, 0);
+    book.totalWords = Math.round(book.totalChars / 100) / 10;
+    book.latest = Math.max.apply(null, book.chapters.map(function(c){ return c.n; }));
+    return api(dir + "/book.js", "PUT", {
+      message: "更新《" + bk.title + "》目录：第" + n + "章 " + t,
+      content: b64encode("window.BOOK=\n" + JSON.stringify(book, null, 2) + ";\n"),
+      branch: cfg.branch, sha: bookFile.sha
+    });
   }).then(function(){
-    setProg("prog2", 100);
-    try {
-      var books = parseBooksJs("window.BOOKS=" + JSON.stringify((window.BOOKS || []).filter(function(b){ return b.id !== slug; }).concat([{
-        id: slug, dir: dir, title: title, author: author,
-        genre: bookObj.genre, status: bookObj.status, coverText: bookObj.coverText,
-        intro: bookObj.intro, tags: bookObj.tags,
-        chapters: chapters.length, totalWords: totalWords, latest: chapters.length
-      }])) + ";");
-      window.BOOKS = books;
-    } catch(e){}
-    refreshBookSel();
-    var siteBase = location.href.replace(/admin\.html.*$/, "");
-    setMsg("nbMsg",
-      "发布成功！《" + esc(title) + "》共 " + chapters.length + " 章已写入仓库。\n" +
-      "GitHub Pages 约 1–2 分钟后生效：<a href=\"" + siteBase + "book.html?id=" + encodeURIComponent(slug) + "\" target=\"_blank\">打开书页看看 →</a>",
-      "ok");
-    pendingImport = null;
-  }).catch(function(e){
-    if(e && e.cancelled){ setMsg("nbMsg", "已取消。", "info"); }
-    else setMsg("nbMsg", "失败：" + esc(e && e.message ? e.message : e), "err");
-    setProg("prog2", 100);
-  }).then(function(){ btn.disabled = false; });
-};
+    setProg(100);
+    var base = location.href.replace(/admin\.html.*$/, "");
+    setMsg("发布成功！《" + bk.title + "》第 " + n + " 章，约 1–2 分钟后生效：" +
+      '<a href="' + base + "read.html?b=" + encodeURIComponent(bk.id) + "&c=" + n + '" target="_blank">打开看看 →</a>', "ok", true);
+    pending = null;
+  });
+}
 
 fillCfg();
 refreshBookSel();
