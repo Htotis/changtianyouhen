@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="robots" content="noindex,nofollow">
+<title>管理 · 长天有痕</title>
+<style>
+:root{
+  --bg:#14110d; --card:#1e1913; --line:rgba(255,255,255,.08);
+  --gold:#d9a45b; --gold-dim:rgba(217,164,91,.35);
+  --text:#e8dfcf; --muted:#9a8f7c; --danger:#e06c5b; --ok:#7fc98a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:"Noto Serif SC","Songti SC",serif;line-height:1.8;min-height:100vh}
+.wrap{max-width:680px;margin:0 auto;padding:20px 16px 60px}
+header.top{text-align:center;padding:26px 0 18px;border-bottom:1px solid var(--line);margin-bottom:18px}
+header.top h1{font-size:1.3em;letter-spacing:.35em;color:var(--gold);margin-bottom:6px}
+header.top p{color:var(--muted);font-size:.82em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:16px}
+.card h2{font-size:1em;color:var(--gold);margin-bottom:14px;letter-spacing:.15em}
+label{display:block;margin-bottom:12px;font-size:.9em;color:var(--muted)}
+label input,label textarea{display:block;width:100%;margin-top:6px;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:#14110d;color:var(--text);font-size:.95em;font-family:inherit}
+label textarea{line-height:1.9;resize:vertical}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.btn{border:1px solid var(--gold-dim);background:transparent;color:var(--gold);border-radius:20px;padding:9px 20px;font-size:.9em;cursor:pointer;font-family:inherit}
+.btn:hover{background:rgba(217,164,91,.12)}
+.btn--primary{background:var(--gold);color:#1a140d;border-color:var(--gold);font-weight:600}
+.btn--primary:hover{background:#c8934a}
+.btn:disabled{opacity:.45;cursor:default}
+.hint{font-size:.8em;color:var(--muted);margin-top:10px;line-height:1.7}
+.hint code{color:var(--gold);font-size:.95em}
+.msg{font-size:.88em;margin-top:10px;min-height:1.6em;white-space:pre-wrap;word-break:break-all}
+.msg.ok{color:var(--ok)} .msg.err{color:var(--danger)} .msg.info{color:var(--muted)}
+.msg a{color:var(--gold)}
+input[type=file]{margin:4px 0 12px;font-size:.85em;color:var(--muted)}
+.prog{height:4px;background:rgba(255,255,255,.06);border-radius:2px;margin-top:12px;overflow:hidden;display:none}
+.prog.show{display:block}
+.prog i{display:block;height:100%;width:0;background:var(--gold);transition:width .3s}
+.latest-tag{font-size:.85em;color:var(--gold)}
+footer{margin-top:26px;text-align:center;color:var(--muted);font-size:.78em}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>管理后台</h1>
+    <p>长天有痕 · 在线发布章节（本站不做索引，请勿外传此页）</p>
+  </header>
+
+  <section class="card">
+    <h2>一、仓库设置（只需填一次）</h2>
+    <label>仓库 <input id="repo" value="Htotis/changtianyouhen" placeholder="用户名/仓库名"></label>
+    <label>分支 <input id="branch" value="main"></label>
+    <label>Token（密码框，只存你本机浏览器）
+      <input id="token" type="password" placeholder="粘贴 GitHub Personal Access Token" autocomplete="off">
+    </label>
+    <div class="row">
+      <button class="btn" id="saveCfg">保存设置</button>
+      <button class="btn" id="testConn">测试连接</button>
+    </div>
+    <p class="hint">Token 获取：GitHub → 头像 → Settings → Developer settings → Personal access tokens → <code>Fine-grained tokens</code> → Generate new token，只给<b>这一个仓库</b>的 <code>Contents</code> 读写权限（Read and write）。Token 只保存在你当前设备的浏览器 localStorage 里，本页面不会把它发给除 GitHub 之外的任何地方。</p>
+    <div class="msg" id="cfgMsg"></div>
+  </section>
+
+  <section class="card">
+    <h2>二、发布新章节</h2>
+    <div class="row" style="margin-bottom:12px">
+      <button class="btn" id="fetchLatest">获取最新章节号</button>
+      <span class="latest-tag" id="latestInfo"></span>
+    </div>
+    <label>章节号 <input id="chN" type="number" min="1" placeholder="如：31"></label>
+    <label>章节标题 <input id="chT" placeholder="如：三战·藏（可从正文首行自动识别）"></label>
+    <label>正文（粘贴，或从下面的文件选择）
+      <textarea id="chBody" rows="12" placeholder="把章节正文粘贴到这里…"></textarea>
+    </label>
+    <input type="file" id="chFile" accept=".txt">
+    <div class="row">
+      <button class="btn btn--primary" id="publish">发布章节</button>
+    </div>
+    <div class="prog" id="prog"><i></i></div>
+    <div class="msg" id="pubMsg"></div>
+    <p class="hint">发布后 GitHub Pages 约 1–2 分钟生效，可先去仓库 Actions 页看部署状态。若章节号已存在，会先跟你确认是否覆盖。</p>
+  </section>
+
+  <footer><a href="index.html">← 返回首页</a></footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+var $ = function(id){ return document.getElementById(id); };
+var LS_KEY = "ctyh_admin_cfg_v1";
+
+function loadCfg(){
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || "{}"); } catch(e){ return {}; }
+}
+function getCfg(){
+  var c = loadCfg();
+  c.repo = ($("repo").value || c.repo || "").trim();
+  c.branch = ($("branch").value || c.branch || "main").trim();
+  c.token = ($("token").value || c.token || "").trim();
+  return c;
+}
+function fillCfg(){
+  var c = loadCfg();
+  if(c.repo) $("repo").value = c.repo;
+  if(c.branch) $("branch").value = c.branch;
+  if(c.token) $("token").value = c.token;
+}
+function b64encode(str){ return btoa(unescape(encodeURIComponent(str))); }
+function b64decode(b64){ return decodeURIComponent(escape(atob(String(b64).replace(/\s/g,"")))); }
+function setMsg(id, text, cls){ var el = $(id); el.className = "msg " + (cls||""); el.innerHTML = text; }
+function setProg(p){ var w = $("prog"); w.classList.add("show"); w.firstElementChild.style.width = p + "%"; if(p>=100){ setTimeout(function(){ w.classList.remove("show"); }, 800); } }
+
+function api(path, method, body){
+  var c = getCfg();
+  if(!c.repo || !c.token) return Promise.reject(new Error("请先填写仓库和 Token 并保存设置。"));
+  var url = "https://api.github.com/repos/" + c.repo + "/contents/" + path;
+  if((method||"GET") === "GET") url += "?ref=" + encodeURIComponent(c.branch || "main");
+  return fetch(url, {
+    method: method || "GET",
+    headers: {
+      "Authorization": "Bearer " + c.token,
+      "Accept": "application/vnd.github+json",
+      "Content-Type": "application/json"
+    },
+    body: body ? JSON.stringify(body) : undefined
+  }).then(function(r){
+    if(!r.ok) return r.text().then(function(t){
+      var msg = "GitHub API " + r.status;
+      try { var j = JSON.parse(t); if(j.message) msg += "：" + j.message; } catch(e){ msg += "：" + t.slice(0,120); }
+      throw new Error(msg);
+    });
+    return r.json();
+  });
+}
+
+function parseBookJs(text){
+  var jsonText = text.replace(/^window\.BOOK\s*=\s*/, "").replace(/;\s*$/, "");
+  return JSON.parse(jsonText);
+}
+
+/* 从正文识别标题：首行如「第三十一章 三战·藏」 */
+function splitTitle(lines, presetTitle){
+  var title = (presetTitle || "").trim();
+  if(lines.length && /^第[一二三四五六七八九十百千零\d两]+章/.test(lines[0].trim())){
+    var parts = lines[0].trim().split(/[\s　]+/);
+    if(parts.length > 1 && !title) title = parts.slice(1).join(" ").trim();
+    lines = lines.slice(1);
+  }
+  return { title: title, lines: lines };
+}
+
+$("saveCfg").onclick = function(){
+  var c = getCfg();
+  if(!c.repo || !c.token){ setMsg("cfgMsg", "仓库和 Token 都要填。", "err"); return; }
+  localStorage.setItem(LS_KEY, JSON.stringify(c));
+  setMsg("cfgMsg", "已保存到本机浏览器。", "ok");
+};
+
+$("testConn").onclick = function(){
+  var c = getCfg();
+  if(!c.repo || !c.token){ setMsg("cfgMsg", "请先填写仓库和 Token 并保存设置。", "err"); return; }
+  setMsg("cfgMsg", "正在连接…", "info");
+  fetch("https://api.github.com/repos/" + c.repo, {
+    headers: { "Authorization": "Bearer " + c.token, "Accept": "application/vnd.github+json" }
+  }).then(function(r){
+    if(r.status === 200) return r.json();
+    throw new Error("连接失败，HTTP " + r.status + "（检查仓库名和 Token 权限）");
+  }).then(function(j){
+    localStorage.setItem(LS_KEY, JSON.stringify(c));
+    setMsg("cfgMsg", "连接成功：<b>" + j.full_name + "</b>（" + (j.private ? "私有" : "公开") + "仓库，默认分支 " + j.default_branch + "）", "ok");
+  }).catch(function(e){ setMsg("cfgMsg", e.message, "err"); });
+};
+
+$("fetchLatest").onclick = function(){
+  setMsg("pubMsg", "", "");
+  $("latestInfo").textContent = "读取中…";
+  api("data/book.js").then(function(f){
+    var book = parseBookJs(b64decode(f.content));
+    var nums = book.chapters.map(function(c){ return c.n; });
+    var latest = nums.length ? Math.max.apply(null, nums) : 0;
+    $("latestInfo").textContent = "当前共 " + nums.length + " 章，最新章节：第 " + latest + " 章";
+    $("chN").value = latest + 1;
+  }).catch(function(e){ $("latestInfo").textContent = ""; setMsg("pubMsg", e.message, "err"); });
+};
+
+$("chFile").onchange = function(){
+  var f = this.files && this.files[0];
+  if(!f) return;
+  var rd = new FileReader();
+  rd.onload = function(){ $("chBody").value = String(rd.result || ""); setMsg("pubMsg", "已载入文件：" + f.name + "，请核对标题后发布。", "info"); };
+  rd.readAsText(f, "utf-8");
+};
+
+$("publish").onclick = function(){
+  var n = parseInt($("chN").value, 10);
+  var raw = ($("chBody").value || "").replace(/\r\n?/g, "\n");
+  if(!(n > 0)){ setMsg("pubMsg", "请填写章节号。", "err"); return; }
+  var lines = raw.split("\n");
+  var sp = splitTitle(lines, $("chT").value);
+  if(!sp.title){ setMsg("pubMsg", "请填写章节标题（或让正文首行带「第X章 标题」自动识别）。", "err"); return; }
+  var paras = sp.lines.map(function(s){ return s.trim(); }).filter(function(s){ return s.length > 0; });
+  if(!paras.length){ setMsg("pubMsg", "正文是空的。", "err"); return; }
+
+  var btn = $("publish");
+  btn.disabled = true;
+  setProg(8);
+  setMsg("pubMsg", "正在读取目录…", "info");
+
+  var pad = String(n).padStart(3, "0");
+  var chPath = "data/ch/" + pad + ".js";
+  var cfg = getCfg();
+
+  api("data/book.js").then(function(bookFile){
+    var book = parseBookJs(b64decode(bookFile.content));
+    var exists = book.chapters.some(function(c){ return c.n === n; });
+    if(exists && !window.confirm("第 " + n + " 章已存在，确定要覆盖吗？")){
+      throw { cancelled: true };
+    }
+    setProg(25);
+    setMsg("pubMsg", "正在写入第 " + n + " 章正文…", "info");
+    var text = paras.join("\n");
+    var charCount = text.replace(/\s/g, "").length;
+    var chObj = { n: n, t: sp.title, p: paras };
+    var chContent = "window.CHAPTER=" + JSON.stringify(chObj) + ";";
+
+    var putChapter = function(sha){
+      var body = { message: (exists ? "更新" : "新增") + "第" + n + "章 " + sp.title, content: b64encode(chContent), branch: cfg.branch };
+      if(sha) body.sha = sha;
+      return api(chPath, "PUT", body);
+    };
+
+    var p = exists
+      ? api(chPath).then(function(f){ return putChapter(f.sha); }, function(){ return putChapter(null); })
+      : putChapter(null);
+
+    return p.then(function(){
+      setProg(55);
+      setMsg("pubMsg", "正在更新目录…", "info");
+      book.chapters = book.chapters.filter(function(c){ return c.n !== n; });
+      book.chapters.push({ n: n, t: sp.title, c: charCount, w: Math.round(charCount / 100) / 10 });
+      book.chapters.sort(function(a,b){ return a.n - b.n; });
+      book.totalChars = book.chapters.reduce(function(s,c){ return s + c.c; }, 0);
+      book.totalWords = Math.round(book.totalChars / 100) / 10;
+      book.latest = Math.max.apply(null, book.chapters.map(function(c){ return c.n; }));
+      var newText = "window.BOOK=\n" + JSON.stringify(book, null, 2) + ";\n";
+      return api("data/book.js", "PUT", {
+        message: "更新目录：第" + n + "章 " + sp.title,
+        content: b64encode(newText),
+        branch: cfg.branch,
+        sha: bookFile.sha
+      });
+    }).then(function(){
+      setProg(100);
+      var siteBase = location.href.replace(/admin\.html.*$/, "");
+      setMsg("pubMsg",
+        "发布成功！第 " + n + " 章《" + sp.title + "》已写入仓库。\n" +
+        "GitHub Pages 约 1–2 分钟后生效：<a href=\"" + siteBase + "read.html?c=" + n + "\" target=\"_blank\">打开第 " + n + " 章看看 →</a>",
+        "ok");
+      $("latestInfo").textContent = "当前共 " + book.chapters.length + " 章，最新章节：第 " + book.latest + " 章";
+    });
+  }).catch(function(e){
+    if(e && e.cancelled){ setMsg("pubMsg", "已取消。", "info"); }
+    else setMsg("pubMsg", "失败：" + (e && e.message ? e.message : e), "err");
+    setProg(100);
+  }).then(function(){ btn.disabled = false; });
+};
+
+fillCfg();
+})();
+</script>
+</body>
+</html>
