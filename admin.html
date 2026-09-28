@@ -145,8 +145,8 @@ function setMsg(t, cls, html){ var el = $("msg"); el.className = "msg " + (cls||
 function setProg(p){
   var w = $("prog"); w.classList.add("show");
   w.firstElementChild.style.width = p + "%";
-  if(p >= 100) setTimeout(function(){ w.classList.remove("show"); }, 900);
 }
+function hideProg(){ $("prog").classList.remove("show"); }
 function api(path, method, body){
   var c = getCfg();
   if(!c.repo || !c.token) return Promise.reject(new Error("no-token"));
@@ -377,7 +377,7 @@ $("publish").addEventListener("click", function(){
   (pending.mode === "book" ? publishBook(cfg) : publishChapter(cfg))
     .catch(function(e){
       setMsg("失败：" + (e && e.message === "no-token" ? "请先填写 Token。" : esc(e && e.message ? e.message : e)), "err");
-      setProg(100);
+      hideProg();
     })
     .then(function(){ btn.disabled = false; });
 });
